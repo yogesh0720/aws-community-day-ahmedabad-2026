@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Menu, X, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '../../data/images/community-day-logo.png';
+
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,8 +23,9 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl text-gray-900">
-            <Calendar className="w-6 h-6 text-orange-600" />
-            <span>AWS Day 2026</span>
+          {/* <Calendar className="w-6 h-6 text-orange-600" /> */}
+               <img src={logo} alt="community day" className="w-40 h-500 object-contain" />
+              <span>ACD Ahmedabad 2026</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">

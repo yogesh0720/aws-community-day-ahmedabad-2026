@@ -1,33 +1,33 @@
-import { Linkedin } from 'lucide-react';
+// import { Linkedin } from 'lucide-react';
 import { SEOHead } from '../components/Layout/SEOHead';
 
 export function About() {
-  const organizers = [
-    {
-      name: 'Aric Pandya',
-      role: 'Community Lead',
-      organization: 'AWS User Group Ahmedabad',
-      bio: 'Cloud architect with 8+ years of AWS experience. Passionate about community building.',
-      linkedin: 'https://linkedin.com/in/priya-sharma',
-      image: '/src/data/images/Aric.png',
-    },
-    {
-      name: 'Nilesh SIR',
-      role: 'Co-organizer',
-      organization: 'Tech Innovations Ltd',
-      bio: 'DevOps specialist and AWS Solutions Architect. Speaker at 15+ tech events.',
-      linkedin: 'https://linkedin.com/in/rajesh-kumar',
-      image: 'https://images.pexels.com/photos/3785933/pexels-photo-3785933.jpeg?auto=compress&cs=tinysrgb&w=400',
-    },
-    {
-      name: 'Aisha Patel',
-      role: 'Program Manager',
-      organization: 'AWS User Group Ahmedabad',
-      bio: 'Event organizer and community advocate. Ensures amazing attendee experiences.',
-      linkedin: 'https://linkedin.com/in/aisha-patel',
-      image: 'https://images.pexels.com/photos/3807510/pexels-photo-3807510.jpeg?auto=compress&cs=tinysrgb&w=400',
-    },
-  ];
+  // const organizers = [
+  //   {
+  //     name: 'Aric Pandya',
+  //     role: 'Community Lead',
+  //     organization: 'AWS User Group Ahmedabad',
+  //     bio: 'Cloud architect with 8+ years of AWS experience. Passionate about community building.',
+  //     linkedin: 'https://linkedin.com/in/priya-sharma',
+  //     image: '/src/data/images/Aric.png',
+  //   },
+  //   {
+  //     name: 'Nilesh SIR',
+  //     role: 'Co-organizer',
+  //     organization: 'Tech Innovations Ltd',
+  //     bio: 'DevOps specialist and AWS Solutions Architect. Speaker at 15+ tech events.',
+  //     linkedin: 'https://linkedin.com/in/rajesh-kumar',
+  //     image: 'https://images.pexels.com/photos/3785933/pexels-photo-3785933.jpeg?auto=compress&cs=tinysrgb&w=400',
+  //   },
+  //   {
+  //     name: 'Aisha Patel',
+  //     role: 'Program Manager',
+  //     organization: 'AWS User Group Ahmedabad',
+  //     bio: 'Event organizer and community advocate. Ensures amazing attendee experiences.',
+  //     linkedin: 'https://linkedin.com/in/aisha-patel',
+  //     image: 'https://images.pexels.com/photos/3807510/pexels-photo-3807510.jpeg?auto=compress&cs=tinysrgb&w=400',
+  //   },
+  // ];
 
   const metaDescription = 'Learn about AWS Community Day 2026 and the AWS User Group Ahmedabad. Meet the organizers and understand our mission to build the cloud community.';
 
@@ -47,7 +47,7 @@ export function About() {
           </div>
         </section>
 
-        <section className="py-12 md:py-20">
+        <section className="py-10 md:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
@@ -77,7 +77,7 @@ export function About() {
             <div className="mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">AWS User Group Ahmedabad</h2>
               <p className="text-gray-700 mb-4">
-                The AWS User Group Ahmedabad is a community of developers, architects, and cloud enthusiasts passionate about Amazon Web Services. Founded in 2022, we've grown to over 2,000+ members who regularly attend our meetups, webinars, and annual community day.
+                The AWS User Group Ahmedabad is a community of developers, architects, and cloud enthusiasts passionate about Amazon Web Services. Founded in 2014, we've grown to over 10,000+ members who regularly attend our meetups, webinars, and annual community day.
               </p>
               <p className="text-gray-700">
                 Our group meets monthly to discuss AWS trends, share experiences, and collaborate on real-world cloud projects. Whether you're just starting your cloud journey or a seasoned AWS expert, there's a place for you in our community.
@@ -85,8 +85,33 @@ export function About() {
             </div>
           </div>
         </section>
-
-        <section className="bg-gray-50 py-12 md:py-20">
+        <section className="py-12 md:py-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Get Involved</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Attend Our Meetups</h3>
+                <p className="text-gray-700 mb-4">
+                  Join our regular monthly meetups to network with fellow AWS enthusiasts and learn about the latest AWS services and best practices.
+                </p>
+                <a href="#" className="text-orange-600 hover:text-orange-700 font-medium transition-colors">
+                  Find meetups →
+                </a>
+              </div>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Become a Speaker</h3>
+                <p className="text-gray-700 mb-4">
+                  Share your AWS knowledge and experience with our community. We're always looking for speakers at all levels.
+                </p>
+                <a href="#" className="text-orange-600 hover:text-orange-700 font-medium transition-colors">
+                  Submit talk proposal →
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+         {/* organizer */}
+        {/* <section className="bg-gray-50 py-12 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Meet the Organizers</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -119,33 +144,8 @@ export function About() {
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="py-12 md:py-20">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Get Involved</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Attend Our Meetups</h3>
-                <p className="text-gray-700 mb-4">
-                  Join our regular monthly meetups to network with fellow AWS enthusiasts and learn about the latest AWS services and best practices.
-                </p>
-                <a href="#" className="text-orange-600 hover:text-orange-700 font-medium transition-colors">
-                  Find meetups →
-                </a>
-              </div>
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Become a Speaker</h3>
-                <p className="text-gray-700 mb-4">
-                  Share your AWS knowledge and experience with our community. We're always looking for speakers at all levels.
-                </p>
-                <a href="#" className="text-orange-600 hover:text-orange-700 font-medium transition-colors">
-                  Submit talk proposal →
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        </section> */}
+        
       </main>
     </>
   );
