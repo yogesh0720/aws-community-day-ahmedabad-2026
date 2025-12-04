@@ -14,6 +14,7 @@ import { Badge } from './pages/Badge';
 import { Contact } from './pages/Contact';
 import { Travel } from './pages/Travel';
 import { CodeOfConduct, PrivacyPolicy, Accessibility } from './pages/Policies';
+import { Admin } from './pages/Admin';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="/code-of-conduct" element={<CodeOfConduct />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/accessibility" element={<Accessibility />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<Home />} />
             </Routes>
           </main>

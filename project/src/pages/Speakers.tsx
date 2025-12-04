@@ -2,13 +2,25 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Linkedin, Twitter, Github } from 'lucide-react';
 import { SEOHead } from '../components/Layout/SEOHead';
-import { supabase, Speaker } from '../lib/supabase';
+import { Speaker } from '../lib/supabase';
+import { speakersApi } from '../lib/api';
 
 export function Speakers() {
-  const [speakers] = useState<Speaker[]>([]);
-  // Do not fetch or display speakers publicly yet — show a placeholder message.
-  // Keep SpeakerDetail and other helpers intact for future use.
-  const [loading] = useState(false);
+  const [speakers, setSpeakers] = useState<Speaker[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await speakersApi.getAll();
+        setSpeakers(data);
+      } catch (error) {
+        console.error('Error loading speakers:', error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const metaDescription = 'Meet the speakers at AWS Community Day 2026. Learn from industry experts sharing their knowledge on AWS and cloud technologies.';
 
@@ -126,11 +138,7 @@ export function SpeakerDetail() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await supabase
-          .from('speakers')
-          .select('*')
-          .eq('id', id)
-          .maybeSingle();
+        const data = await speakersApi.getById(id!);
         setSpeaker(data);
       } catch (error) {
         console.error('Error loading speaker:', error);
@@ -229,10 +237,6 @@ export function SpeakerDetail() {
                 <h2 className="text-xl font-bold text-gray-900 mb-3">Talk: {speaker.talk_title}</h2>
                 <p className="text-gray-700 mb-4">{speaker.abstract}</p>
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Track:</span>
-                    <span className="ml-2 font-medium text-gray-900">{speaker.track}</span>
-                  </div>
                   <div>
                     <span className="text-gray-600">Duration:</span>
                     <span className="ml-2 font-medium text-gray-900">{speaker.talk_length_minutes} minutes</span>

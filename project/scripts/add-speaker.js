@@ -15,18 +15,18 @@ Usage:
 This script uses the service role key, so keep the `.env` file secret.
 */
 
-import fs from 'fs';
-import path from 'path';
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
+import fs from "fs";
+import path from "path";
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE;
 
 if (!supabaseUrl || !supabaseServiceRole) {
-  console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE in .env');
+  console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE in .env");
   process.exit(1);
 }
 
@@ -35,21 +35,21 @@ const supabase = createClient(supabaseUrl, supabaseServiceRole);
 async function main() {
   const arg = process.argv[2];
   if (!arg) {
-    console.error('Usage: node add-speaker.js <path-to-speaker-json>');
+    console.error("Usage: node add-speaker.js <path-to-speaker-json>");
     process.exit(1);
   }
 
   const filePath = path.resolve(process.cwd(), arg);
   if (!fs.existsSync(filePath)) {
-    console.error('File not found:', filePath);
+    console.error("File not found:", filePath);
     process.exit(1);
   }
 
   let raw;
   try {
-    raw = fs.readFileSync(filePath, 'utf-8');
+    raw = fs.readFileSync(filePath, "utf-8");
   } catch (err) {
-    console.error('Failed to read file:', err);
+    console.error("Failed to read file:", err);
     process.exit(1);
   }
 
@@ -57,25 +57,28 @@ async function main() {
   try {
     speaker = JSON.parse(raw);
   } catch (err) {
-    console.error('Invalid JSON:', err);
+    console.error("Invalid JSON:", err);
     process.exit(1);
   }
 
   // Basic validation
   if (!speaker.name || !speaker.talk_title) {
-    console.error('Speaker must include at least `name` and `talk_title`.');
+    console.error("Speaker must include at least `name` and `talk_title`.");
     process.exit(1);
   }
 
   try {
-    const { data, error } = await supabase.from('speakers').insert([speaker]).select();
+    const { data, error } = await supabase
+      .from("speakers")
+      .insert([speaker])
+      .select();
     if (error) {
-      console.error('Supabase error:', error);
+      console.error("Supabase error:", error);
       process.exit(1);
     }
-    console.log('Inserted speaker:', JSON.stringify(data, null, 2));
+    console.log("Inserted speaker:", JSON.stringify(data, null, 2));
   } catch (err) {
-    console.error('Unexpected error:', err);
+    console.error("Unexpected error:", err);
     process.exit(1);
   }
 }

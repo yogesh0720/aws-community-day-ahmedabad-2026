@@ -67,7 +67,11 @@ export type Volunteer = {
   experience_level?: string;
   availability: string[];
   motivation: string;
-  confirmation_sent: boolean;
+  photo_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  github_url?: string;
+  sort_order: number;
   created_at: string;
 };
 
