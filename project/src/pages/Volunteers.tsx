@@ -196,16 +196,22 @@ export function Volunteers() {
                       key={volunteer.id}
                       className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-orange-200 transition-all"
                     >
-                      {volunteer.photo_url && (
-                        <div className="aspect-square bg-gray-200 overflow-hidden">
+                      <div className="aspect-square bg-gray-200 overflow-hidden">
+                        {volunteer.photo_url ? (
                           <img
                             src={volunteer.photo_url}
                             alt={volunteer.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                             loading="lazy"
                           />
-                        </div>
-                      )}
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                            <span className="text-4xl font-bold text-gray-400">
+                              {volunteer.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                       <div className="p-4">
                         <h3 className="font-semibold text-gray-900 mb-1">
                           {volunteer.name}

@@ -1,16 +1,16 @@
 import { supabase } from './supabase';
+import bcrypt from 'bcryptjs';
 
 const ADMIN_SESSION_KEY = 'admin_session';
 
 export const adminAuth = {
   async login(email: string, password: string) {
     try {
-      // Check admin credentials in admin_users table
+      // Get admin user by email
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
         .eq('email', email)
-        .eq('password', password)
         .eq('role', 'admin')
         .single();
 
@@ -18,9 +18,21 @@ export const adminAuth = {
         return { data: null, error: { message: 'Invalid credentials' } };
       }
 
-      // Store session in localStorage
-      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(data));
-      return { data, error: null };
+      // Verify password hash
+      const isValidPassword = await bcrypt.compare(password, data.password_hash);
+      if (!isValidPassword) {
+        return { data: null, error: { message: 'Invalid credentials' } };
+      }
+
+      // Store minimal session data in localStorage
+      const sessionData = {
+        id: data.id,
+        email: data.email,
+        role: data.role,
+        loginTime: Date.now()
+      };
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(sessionData));
+      return { data: sessionData, error: null };
     } catch (error) {
       return { data: null, error: { message: 'Login failed' } };
     }
@@ -43,5 +55,21 @@ export const adminAuth = {
   async isAdmin() {
     const user = await this.getUser();
     return user && user.role === 'admin';
+  },
+
+  async isSessionValid() {
+    const user = await this.getUser();
+    if (!user || !user.loginTime) return false;
+    
+    // Session expires after 24 hours
+    const sessionAge = Date.now() - user.loginTime;
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+    
+    if (sessionAge > maxAge) {
+      await this.logout();
+      return false;
+    }
+    
+    return true;
   }
 };
