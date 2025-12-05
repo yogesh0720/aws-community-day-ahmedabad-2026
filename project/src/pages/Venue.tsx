@@ -2,7 +2,7 @@ import { MapPin, Plane, Train, ParkingCircle, Accessibility } from 'lucide-react
 import { SEOHead } from '../components/Layout/SEOHead';
 
 export function Venue() {
-  const metaDescription = 'AWS Community Day 2026 venue details, location at Parul University Vadodara, parking, accessibility, and transportation information.';
+  const metaDescription = 'AWS Community Day 2026 venue details, location at Gujarat University Convention and Exhibition Ahmedabad Centre, parking, accessibility, and transportation information.';
 
   return (
     <>
@@ -15,7 +15,7 @@ export function Venue() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Venue & Location</h1>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Find us at Parul University in Vadodara on December 13, 2026.
+              Find us at Gujarat University Convention and Exhibition Centre in Ahmedabad on Februray 28, 2026.
             </p>
           </div>
         </section>
@@ -29,24 +29,24 @@ export function Venue() {
                   <div className="flex gap-3 mb-4">
                     <MapPin className="w-6 h-6 text-orange-600 flex-shrink-0" />
                     <div>
-                      <h3 className="font-bold text-gray-900">Parul University</h3>
-                      <p className="text-gray-600">Limda, Vadodara, Gujarat 391110</p>
+                      <h3 className="font-bold text-gray-900">Gujarat University Convention and Exhibition Centre</h3>
+                      <p className="text-gray-600">Memnagar, Ahmedabad, Gujarat 380052</p>
                       <p className="text-gray-500 text-sm mt-1">India</p>
                     </div>
                   </div>
                   <div className="bg-white rounded p-3 mb-4">
                     <p className="text-sm text-gray-600">
-                      <strong>Event Date:</strong> December 13, 2026
+                      <strong>Event Date:</strong> Februray 28, 2026
                     </p>
                     <p className="text-sm text-gray-600 mt-2">
-                      <strong>Time:</strong> 9:00 AM - 6:00 PM IST
+                      <strong>Time:</strong> 8:00 AM - 6:00 PM IST
                     </p>
                   </div>
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-4">About the Venue</h3>
                 <p className="text-gray-700 mb-4">
-                  Parul University is a premier educational institution in Gujarat, featuring modern auditoriums, breakout spaces, and excellent connectivity. The campus is designed to accommodate large-scale events with world-class facilities.
+                 Gujarat University Convention and Exhibition Centre is a premier Convention Center in Gujarat, featuring modern auditoriums, breakout spaces, and excellent connectivity. The campus is designed to accommodate large-scale events with world-class facilities.
                 </p>
 
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
