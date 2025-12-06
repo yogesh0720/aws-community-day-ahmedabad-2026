@@ -21,22 +21,22 @@ interface FormState {
   motivation: string;
 }
 
-const VOLUNTEER_ROLES = [
-  "Event Day Support",
-  "Registration Desk",
-  "Speaker Support",
-  "Venue Setup",
-  "Photography/Video",
-  "Social Media",
-  "Logistics",
-  "Accessibility Support",
-];
+// const VOLUNTEER_ROLES = [
+//   "Event Day Support",
+//   "Registration Desk",
+//   "Speaker Support",
+//   "Venue Setup",
+//   "Photography/Video",
+//   "Social Media",
+//   "Logistics",
+//   "Accessibility Support",
+// ];
 
-const AVAILABILITY_OPTIONS = [
-  "Event Day (Dec 13)",
-  "Day Before (Dec 12)",
-  "Day After (Dec 14)",
-];
+// const AVAILABILITY_OPTIONS = [
+//   "Event Day (Dec 13)",
+//   "Day Before (Dec 12)",
+//   "Day After (Dec 14)",
+// ];
 
 export function Volunteers() {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
@@ -216,10 +216,10 @@ export function Volunteers() {
                         <h3 className="font-semibold text-gray-900 mb-1">
                           {volunteer.name}
                         </h3>
-                        <p className="text-sm text-orange-600 font-medium mb-2">
+                        {/* <p className="text-sm text-orange-600 font-medium mb-2">
                           {volunteer.role}
-                        </p>
-                        {volunteer.experience_level && (
+                        </p> */}
+                        {/* {volunteer.experience_level && (
                           <p className="text-xs text-gray-500 mb-2">
                             {volunteer.experience_level
                               ?.replace("-", " ")
@@ -238,7 +238,7 @@ export function Volunteers() {
                                 .replace("Day After (Dec 14)", "Cleanup")}
                             </span>
                           ))}
-                        </div>
+                        </div> */}
                         {(volunteer.linkedin_url ||
                           volunteer.twitter_url ||
                           volunteer.github_url) && (
@@ -254,7 +254,7 @@ export function Volunteers() {
                                 <Linkedin className="w-4 h-4" />
                               </a>
                             )}
-                            {volunteer.twitter_url && (
+                            {/* {volunteer.twitter_url && (
                               <a
                                 href={volunteer.twitter_url}
                                 target="_blank"
@@ -275,7 +275,7 @@ export function Volunteers() {
                               >
                                 <Github className="w-4 h-4" />
                               </a>
-                            )}
+                            )} */}
                           </div>
                         )}
                       </div>

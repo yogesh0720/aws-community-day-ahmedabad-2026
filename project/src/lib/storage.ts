@@ -20,12 +20,12 @@ const BUCKET_CONFIGS: Record<string, BucketConfig> = {
   },
   speakers: {
     name: import.meta.env.VITE_SPEAKERS_BUCKET || "speakers",
-    sizeLimit: parseInt(import.meta.env.VITE_SPEAKERS_SIZE_LIMIT) || 100,
+    sizeLimit: parseInt(import.meta.env.VITE_SPEAKERS_SIZE_LIMIT) || 50,
     defaultExt: "jpg",
   },
   sponsors: {
     name: import.meta.env.VITE_SPONSORS_BUCKET || "sponsors",
-    sizeLimit: parseInt(import.meta.env.VITE_SPONSORS_SIZE_LIMIT) || 200,
+    sizeLimit: parseInt(import.meta.env.VITE_SPONSORS_SIZE_LIMIT) || 50,
     defaultExt: "jpg",
   },
 };

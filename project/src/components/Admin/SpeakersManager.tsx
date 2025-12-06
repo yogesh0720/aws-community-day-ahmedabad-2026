@@ -26,7 +26,10 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
 
   const totalPages = Math.ceil(filteredSpeakers.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const displayedSpeakers = filteredSpeakers.slice(startIndex, startIndex + PAGE_SIZE);
+  const displayedSpeakers = filteredSpeakers.slice(
+    startIndex,
+    startIndex + PAGE_SIZE
+  );
 
   const deleteSpeaker = async (id: string) => {
     if (confirm("Are you sure you want to delete this speaker?")) {
@@ -84,11 +87,11 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
         organization: speaker.organization,
         talk_title: speaker.talk_title,
         abstract: speaker.abstract,
-        bio: speaker.bio,
+        //bio: speaker.bio,
         photo_url: speaker.photo_url,
         linkedin_url: speaker.linkedin_url,
-        twitter_url: speaker.twitter_url,
-        github_url: speaker.github_url,
+        // twitter_url: speaker.twitter_url,
+        // github_url: speaker.github_url,
         talk_length_minutes: speaker.talk_length_minutes,
       });
       onUpdate(speakers.map((s) => (s.id === speaker.id ? updated : s)));
@@ -196,7 +199,11 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {speaker.photo_url ? (
-                    <img src={speaker.photo_url} alt={speaker.name} className="w-10 h-10 rounded-full" />
+                    <img
+                      src={speaker.photo_url}
+                      alt={speaker.name}
+                      className="w-10 h-10 rounded-full"
+                    />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                       <span className="text-gray-500 text-sm font-medium">
@@ -234,12 +241,14 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
             ))}
           </tbody>
         </table>
-        
+
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
             <div className="flex items-center text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(startIndex + PAGE_SIZE, filteredSpeakers.length)} of {filteredSpeakers.length} speakers
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + PAGE_SIZE, filteredSpeakers.length)} of{" "}
+              {filteredSpeakers.length} speakers
             </div>
             <div className="flex items-center space-x-2">
               <button
@@ -253,7 +262,9 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
                 Page {currentPage} of {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                onClick={() =>
+                  setCurrentPage(Math.min(totalPages, currentPage + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -369,14 +380,14 @@ function EditSpeakerModal({
             placeholder="Abstract"
             className="w-full p-2 border rounded h-20"
           />
-          <textarea
+          {/* <textarea
             value={editedSpeaker.bio}
             onChange={(e) =>
               setEditedSpeaker({ ...editedSpeaker, bio: e.target.value })
             }
             placeholder="Bio"
             className="w-full p-2 border rounded h-20"
-          />
+          /> */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Profile Photo
@@ -395,10 +406,23 @@ function EditSpeakerModal({
               disabled={uploading}
               className="w-full p-2 border rounded"
             />
+            <p className="text-xs text-gray-500 mt-1">Max size: 50KB</p>
             {uploading && (
               <p className="text-sm text-gray-500 mt-1">Uploading...</p>
             )}
           </div>
+          <input
+            type="url"
+            value={editedSpeaker.photo_url || ""}
+            onChange={(e) =>
+              setEditedSpeaker({
+                ...editedSpeaker,
+                photo_url: e.target.value,
+              })
+            }
+            placeholder="Photo URL"
+            className="w-full p-2 border rounded"
+          />
           <input
             type="url"
             value={editedSpeaker.linkedin_url || ""}
@@ -411,7 +435,7 @@ function EditSpeakerModal({
             placeholder="LinkedIn URL"
             className="w-full p-2 border rounded"
           />
-          <input
+          {/* <input
             type="url"
             value={editedSpeaker.twitter_url || ""}
             onChange={(e) =>
@@ -431,7 +455,7 @@ function EditSpeakerModal({
             }
             placeholder="GitHub URL"
             className="w-full p-2 border rounded"
-          />
+          /> */}
           <input
             type="number"
             value={editedSpeaker.talk_length_minutes}
@@ -563,13 +587,13 @@ function AddSpeakerModal({
             className="w-full p-2 border rounded h-20"
             required
           />
-          <textarea
+          {/* <textarea
             value={speaker.bio}
             onChange={(e) => setSpeaker({ ...speaker, bio: e.target.value })}
             placeholder="Bio *"
             className="w-full p-2 border rounded h-20"
             required
-          />
+          /> */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Profile Photo
@@ -588,10 +612,23 @@ function AddSpeakerModal({
               disabled={uploading}
               className="w-full p-2 border rounded"
             />
+            <p className="text-xs text-gray-500 mt-1">Max size: 50KB</p>
             {uploading && (
               <p className="text-sm text-gray-500 mt-1">Uploading...</p>
             )}
           </div>
+          <input
+            type="url"
+            value={speaker.photo_url || ""}
+            onChange={(e) =>
+              setSpeaker({
+                ...speaker,
+                photo_url: e.target.value,
+              })
+            }
+            placeholder="Photo URL"
+            className="w-full p-2 border rounded"
+          />
           <input
             type="url"
             value={speaker.linkedin_url}
@@ -601,7 +638,7 @@ function AddSpeakerModal({
             placeholder="LinkedIn URL"
             className="w-full p-2 border rounded"
           />
-          <input
+          {/* <input
             type="url"
             value={speaker.twitter_url}
             onChange={(e) =>
@@ -618,7 +655,7 @@ function AddSpeakerModal({
             }
             placeholder="GitHub URL"
             className="w-full p-2 border rounded"
-          />
+          /> */}
           <input
             type="number"
             value={speaker.talk_length_minutes}

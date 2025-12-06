@@ -19,18 +19,22 @@ export function VolunteersManager({
   );
   const [addingVolunteer, setAddingVolunteer] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredVolunteers = volunteers.filter(v => 
-    v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.role.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredVolunteers = volunteers.filter(
+    (v) =>
+      v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredVolunteers.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const displayedVolunteers = filteredVolunteers.slice(startIndex, startIndex + PAGE_SIZE);
+  const displayedVolunteers = filteredVolunteers.slice(
+    startIndex,
+    startIndex + PAGE_SIZE
+  );
 
   const deleteVolunteer = async (id: string) => {
     if (confirm("Are you sure you want to delete this volunteer?")) {
@@ -38,8 +42,12 @@ export function VolunteersManager({
         await volunteersApi.delete(id);
         onUpdate(volunteers.filter((v) => v.id !== id));
       } catch (error) {
-        console.error('Delete volunteer error:', error);
-        alert(`Failed to delete volunteer: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.error("Delete volunteer error:", error);
+        alert(
+          `Failed to delete volunteer: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
       }
     }
   };
@@ -48,25 +56,31 @@ export function VolunteersManager({
     if (selectedIds.length === 0) return;
     if (confirm(`Delete ${selectedIds.length} selected volunteers?`)) {
       try {
-        await Promise.all(selectedIds.map(id => volunteersApi.delete(id)));
-        onUpdate(volunteers.filter(v => !selectedIds.includes(v.id)));
+        await Promise.all(selectedIds.map((id) => volunteersApi.delete(id)));
+        onUpdate(volunteers.filter((v) => !selectedIds.includes(v.id)));
         setSelectedIds([]);
       } catch (error) {
-        console.error('Delete volunteers error:', error);
-        alert(`Failed to delete volunteers: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.error("Delete volunteers error:", error);
+        alert(
+          `Failed to delete volunteers: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
       }
     }
   };
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev => 
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
   const toggleSelectAll = () => {
-    setSelectedIds(prev => 
-      prev.length === filteredVolunteers.length ? [] : filteredVolunteers.map(v => v.id)
+    setSelectedIds((prev) =>
+      prev.length === filteredVolunteers.length
+        ? []
+        : filteredVolunteers.map((v) => v.id)
     );
   };
 
@@ -74,23 +88,26 @@ export function VolunteersManager({
     try {
       const updated = await volunteersApi.update(volunteer.id, {
         name: volunteer.name,
-        email: volunteer.email,
-        phone: volunteer.phone,
-        role: volunteer.role,
-        experience_level: volunteer.experience_level,
-        availability: volunteer.availability,
-        motivation: volunteer.motivation,
+        // email: volunteer.email,
+        // phone: volunteer.phone,
+        // role: volunteer.role,
+        // experience_level: volunteer.experience_level,
+        // availability: volunteer.availability,
+        // motivation: volunteer.motivation,
         photo_url: volunteer.photo_url,
         linkedin_url: volunteer.linkedin_url,
-        twitter_url: volunteer.twitter_url,
-        github_url: volunteer.github_url,
-
+        // twitter_url: volunteer.twitter_url,
+        // github_url: volunteer.github_url,
       });
       onUpdate(volunteers.map((v) => (v.id === volunteer.id ? updated : v)));
       setEditingVolunteer(null);
     } catch (error) {
-      console.error('Update volunteer error:', error);
-      alert(`Failed to update volunteer: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Update volunteer error:", error);
+      alert(
+        `Failed to update volunteer: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -102,8 +119,12 @@ export function VolunteersManager({
       onUpdate([newVolunteer, ...volunteers]);
       setAddingVolunteer(false);
     } catch (error) {
-      console.error('Add volunteer error:', error);
-      alert(`Failed to add volunteer: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Add volunteer error:", error);
+      alert(
+        `Failed to add volunteer: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -111,7 +132,9 @@ export function VolunteersManager({
     <div>
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-medium text-gray-900">Manage Volunteers</h2>
+          <h2 className="text-lg font-medium text-gray-900">
+            Manage Volunteers
+          </h2>
           <div className="flex gap-2">
             {selectedIds.length > 0 && (
               <button
@@ -147,7 +170,10 @@ export function VolunteersManager({
               <th className="px-6 py-3 text-left">
                 <input
                   type="checkbox"
-                  checked={selectedIds.length === filteredVolunteers.length && filteredVolunteers.length > 0}
+                  checked={
+                    selectedIds.length === filteredVolunteers.length &&
+                    filteredVolunteers.length > 0
+                  }
                   onChange={toggleSelectAll}
                   className="rounded"
                 />
@@ -158,12 +184,12 @@ export function VolunteersManager({
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Role
-              </th>
+              </th> */}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -182,7 +208,11 @@ export function VolunteersManager({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {volunteer.photo_url ? (
-                    <img src={volunteer.photo_url} alt={volunteer.name} className="w-10 h-10 rounded-full" />
+                    <img
+                      src={volunteer.photo_url}
+                      alt={volunteer.name}
+                      className="w-10 h-10 rounded-full"
+                    />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                       <span className="text-gray-500 text-sm font-medium">
@@ -194,12 +224,12 @@ export function VolunteersManager({
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {volunteer.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {volunteer.email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {volunteer.role}
-                </td>
+                </td> */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button
@@ -220,12 +250,14 @@ export function VolunteersManager({
             ))}
           </tbody>
         </table>
-        
+
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
             <div className="flex items-center text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(startIndex + PAGE_SIZE, filteredVolunteers.length)} of {filteredVolunteers.length} volunteers
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + PAGE_SIZE, filteredVolunteers.length)} of{" "}
+              {filteredVolunteers.length} volunteers
             </div>
             <div className="flex items-center space-x-2">
               <button
@@ -239,7 +271,9 @@ export function VolunteersManager({
                 Page {currentPage} of {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                onClick={() =>
+                  setCurrentPage(Math.min(totalPages, currentPage + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -292,15 +326,19 @@ function EditVolunteerModal({
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     setUploading(true);
     try {
-      const { uploadVolunteerPhoto } = await import('../../lib/storage');
+      const { uploadVolunteerPhoto } = await import("../../lib/storage");
       const photoUrl = await uploadVolunteerPhoto(file, volunteer.id);
       setEditedVolunteer({ ...editedVolunteer, photo_url: photoUrl });
     } catch (error) {
-      console.error('Photo upload error:', error);
-      alert(`Failed to upload photo: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Photo upload error:", error);
+      alert(
+        `Failed to upload photo: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setUploading(false);
     }
@@ -320,7 +358,7 @@ function EditVolunteerModal({
             placeholder="Name"
             className="w-full p-2 border rounded"
           />
-          <input
+          {/* <input
             type="email"
             value={editedVolunteer.email}
             onChange={(e) =>
@@ -328,11 +366,17 @@ function EditVolunteerModal({
             }
             placeholder="Email"
             className="w-full p-2 border rounded"
-          />
+          /> */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Profile Photo
+            </label>
             {editedVolunteer.photo_url && (
-              <img src={editedVolunteer.photo_url} alt="Profile" className="w-16 h-16 rounded-full mb-2" />
+              <img
+                src={editedVolunteer.photo_url}
+                alt="Profile"
+                className="w-16 h-16 rounded-full mb-2"
+              />
             )}
             <input
               type="file"
@@ -341,9 +385,12 @@ function EditVolunteerModal({
               disabled={uploading}
               className="w-full p-2 border rounded"
             />
-            {uploading && <p className="text-sm text-gray-500 mt-1">Uploading...</p>}
+            <p className="text-xs text-gray-500 mt-1">Max size: 50KB</p>
+            {uploading && (
+              <p className="text-sm text-gray-500 mt-1">Uploading...</p>
+            )}
           </div>
-          <input
+          {/* <input
             type="text"
             value={editedVolunteer.phone || ""}
             onChange={(e) =>
@@ -406,7 +453,7 @@ function EditVolunteerModal({
             }
             placeholder="Motivation"
             className="w-full p-2 border rounded h-20"
-          />
+          /> */}
           <input
             type="url"
             value={editedVolunteer.photo_url || ""}
@@ -431,7 +478,7 @@ function EditVolunteerModal({
             placeholder="LinkedIn URL"
             className="w-full p-2 border rounded"
           />
-          <input
+          {/* <input
             type="url"
             value={editedVolunteer.twitter_url || ""}
             onChange={(e) =>
@@ -454,7 +501,7 @@ function EditVolunteerModal({
             }
             placeholder="GitHub URL"
             className="w-full p-2 border rounded"
-          />
+          /> */}
         </div>
         <div className="flex gap-2 mt-6">
           <button
@@ -507,16 +554,20 @@ function AddVolunteerModal({
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     setUploading(true);
     try {
-      const { uploadVolunteerPhoto } = await import('../../lib/storage');
+      const { uploadVolunteerPhoto } = await import("../../lib/storage");
       const tempId = `temp-${Date.now()}`;
       const photoUrl = await uploadVolunteerPhoto(file, tempId);
       setVolunteer({ ...volunteer, photo_url: photoUrl });
     } catch (error) {
-      console.error('Photo upload error:', error);
-      alert(`Failed to upload photo: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Photo upload error:", error);
+      alert(
+        `Failed to upload photo: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setUploading(false);
     }
@@ -542,7 +593,7 @@ function AddVolunteerModal({
             className="w-full p-2 border rounded"
             required
           />
-          <input
+          {/* <input
             type="email"
             value={volunteer.email}
             onChange={(e) =>
@@ -570,11 +621,17 @@ function AddVolunteerModal({
             placeholder="Role *"
             className="w-full p-2 border rounded"
             required
-          />
+          /> */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Profile Photo
+            </label>
             {volunteer.photo_url && (
-              <img src={volunteer.photo_url} alt="Profile" className="w-16 h-16 rounded-full mb-2" />
+              <img
+                src={volunteer.photo_url}
+                alt="Profile"
+                className="w-16 h-16 rounded-full mb-2"
+              />
             )}
             <input
               type="file"
@@ -583,9 +640,12 @@ function AddVolunteerModal({
               disabled={uploading}
               className="w-full p-2 border rounded"
             />
-            {uploading && <p className="text-sm text-gray-500 mt-1">Uploading...</p>}
+            <p className="text-xs text-gray-500 mt-1">Max size: 50KB</p>
+            {uploading && (
+              <p className="text-sm text-gray-500 mt-1">Uploading...</p>
+            )}
           </div>
-          <select
+          {/* <select
             value={volunteer.experience_level}
             onChange={(e) =>
               setVolunteer({ ...volunteer, experience_level: e.target.value })
@@ -625,7 +685,7 @@ function AddVolunteerModal({
             placeholder="Motivation *"
             className="w-full p-2 border rounded h-20"
             required
-          />
+          /> */}
           <input
             type="url"
             value={volunteer.photo_url}
@@ -644,7 +704,7 @@ function AddVolunteerModal({
             placeholder="LinkedIn URL"
             className="w-full p-2 border rounded"
           />
-          <input
+          {/* <input
             type="url"
             value={volunteer.twitter_url}
             onChange={(e) =>
@@ -661,7 +721,7 @@ function AddVolunteerModal({
             }
             placeholder="GitHub URL"
             className="w-full p-2 border rounded"
-          />
+          /> */}
           <div className="flex gap-2 mt-6">
             <button
               type="submit"

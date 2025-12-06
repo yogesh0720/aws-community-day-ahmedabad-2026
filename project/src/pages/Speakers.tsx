@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Linkedin, Twitter, Github } from 'lucide-react';
-import { SEOHead } from '../components/Layout/SEOHead';
-import { Speaker } from '../lib/supabase';
-import { speakersApi } from '../lib/api';
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft, Linkedin, Twitter, Github } from "lucide-react";
+import { SEOHead } from "../components/Layout/SEOHead";
+import { Speaker } from "../lib/supabase";
+import { speakersApi } from "../lib/api";
 
 export function Speakers() {
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
@@ -15,14 +15,15 @@ export function Speakers() {
         const data = await speakersApi.getAll();
         setSpeakers(data);
       } catch (error) {
-        console.error('Error loading speakers:', error);
+        console.error("Error loading speakers:", error);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  const metaDescription = 'Meet the speakers at AWS Community Day 2026. Learn from industry experts sharing their knowledge on AWS and cloud technologies.';
+  const metaDescription =
+    "Meet the speakers at AWS Community Day 2026. Learn from industry experts sharing their knowledge on AWS and cloud technologies.";
 
   return (
     <>
@@ -33,9 +34,12 @@ export function Speakers() {
       <main className="min-h-screen bg-white">
         <section className="bg-gradient-to-br from-orange-50 to-white py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Speakers</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Our Speakers
+            </h1>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Learn from industry experts and thought leaders in the AWS community.
+              Learn from industry experts and thought leaders in the AWS
+              community.
             </p>
           </div>
         </section>
@@ -43,7 +47,9 @@ export function Speakers() {
         <section className="py-12 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-              <div className="text-center text-gray-500">Loading speakers...</div>
+              <div className="text-center text-gray-500">
+                Loading speakers...
+              </div>
             ) : speakers.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {speakers.map((speaker) => (
@@ -51,7 +57,9 @@ export function Speakers() {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-gray-500">More speakers coming soon...</div>
+              <div className="text-center text-gray-500">
+                More speakers coming soon...
+              </div>
             )}
           </div>
         </section>
@@ -85,11 +93,8 @@ function SpeakerCard({ speaker }: { speaker: Speaker }) {
         <p className="text-sm font-medium text-orange-600 mt-3 group-hover:text-orange-700">
           {speaker.talk_title}
         </p>
-        {(speaker.linkedin_url || speaker.twitter_url || speaker.github_url) && (
-          <div
-            className="flex gap-2 mt-4"
-            onClick={(e) => e.preventDefault()}
-          >
+        {speaker.linkedin_url && (
+          <div className="flex gap-2 mt-4" onClick={(e) => e.preventDefault()}>
             {speaker.linkedin_url && (
               <a
                 href={speaker.linkedin_url}
@@ -101,7 +106,7 @@ function SpeakerCard({ speaker }: { speaker: Speaker }) {
                 <Linkedin className="w-4 h-4" />
               </a>
             )}
-            {speaker.twitter_url && (
+            {/* {speaker.twitter_url && (
               <a
                 href={speaker.twitter_url}
                 target="_blank"
@@ -122,7 +127,7 @@ function SpeakerCard({ speaker }: { speaker: Speaker }) {
               >
                 <Github className="w-4 h-4" />
               </a>
-            )}
+            )} */}
           </div>
         )}
       </div>
@@ -141,7 +146,7 @@ export function SpeakerDetail() {
         const data = await speakersApi.getById(id!);
         setSpeaker(data);
       } catch (error) {
-        console.error('Error loading speaker:', error);
+        console.error("Error loading speaker:", error);
       } finally {
         setLoading(false);
       }
@@ -149,14 +154,21 @@ export function SpeakerDetail() {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   if (!speaker) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <p className="text-gray-600">Speaker not found</p>
-        <Link to="/speakers" className="text-orange-600 hover:text-orange-700 mt-4">
+        <Link
+          to="/speakers"
+          className="text-orange-600 hover:text-orange-700 mt-4"
+        >
           Back to Speakers
         </Link>
       </div>
@@ -189,7 +201,9 @@ export function SpeakerDetail() {
                   className="w-full rounded-lg shadow-lg mb-4"
                 />
               )}
-              {(speaker.linkedin_url || speaker.twitter_url || speaker.github_url) && (
+              {(speaker.linkedin_url ||
+                speaker.twitter_url ||
+                speaker.github_url) && (
                 <div className="flex gap-4">
                   {speaker.linkedin_url && (
                     <a
@@ -202,7 +216,7 @@ export function SpeakerDetail() {
                       <Linkedin className="w-6 h-6" />
                     </a>
                   )}
-                  {speaker.twitter_url && (
+                  {/* {speaker.twitter_url && (
                     <a
                       href={speaker.twitter_url}
                       target="_blank"
@@ -223,30 +237,38 @@ export function SpeakerDetail() {
                     >
                       <Github className="w-6 h-6" />
                     </a>
-                  )}
+                  )} */}
                 </div>
               )}
             </div>
 
             <div className="md:col-span-2">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{speaker.name}</h1>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                {speaker.name}
+              </h1>
               <p className="text-lg text-gray-600 mb-1">{speaker.title}</p>
               <p className="text-gray-500 mb-6">{speaker.organization}</p>
 
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-3">Talk: {speaker.talk_title}</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-3">
+                  Talk: {speaker.talk_title}
+                </h2>
                 <p className="text-gray-700 mb-4">{speaker.abstract}</p>
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Duration:</span>
-                    <span className="ml-2 font-medium text-gray-900">{speaker.talk_length_minutes} minutes</span>
+                    <span className="ml-2 font-medium text-gray-900">
+                      {speaker.talk_length_minutes} minutes
+                    </span>
                   </div>
                 </div>
               </div>
 
               {speaker.bio && (
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">About {speaker.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    About {speaker.name}
+                  </h3>
                   <p className="text-gray-700 leading-relaxed">{speaker.bio}</p>
                 </div>
               )}
