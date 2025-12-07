@@ -1,7 +1,22 @@
 import { useState } from "react";
-import { Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+} from "lucide-react";
 import { Speaker } from "../../lib/supabase";
 import { speakersApi } from "../../lib/api";
+import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface SpeakersManagerProps {
   speakers: Speaker[];
@@ -17,7 +32,11 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredSpeakers = speakers.filter(
+  const sortedSpeakers = [...speakers].sort(
+    (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
+  );
+
+  const filteredSpeakers = sortedSpeakers.filter(
     (s) =>
       s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       s.organization.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -30,6 +49,38 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
     startIndex,
     startIndex + PAGE_SIZE
   );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = displayedSpeakers.findIndex((s) => s.id === active.id);
+    const newIndex = displayedSpeakers.findIndex((s) => s.id === over.id);
+
+    const reordered = arrayMove(displayedSpeakers, oldIndex, newIndex);
+
+    try {
+      await Promise.all(
+        reordered.map((speaker, index) =>
+          speakersApi.update(speaker.id, {
+            sort_order: startIndex + index + 1,
+          })
+        )
+      );
+
+      const updatedSpeakers = speakers.map((s) => {
+        const updated = reordered.find((r) => r.id === s.id);
+        return updated
+          ? { ...s, sort_order: reordered.indexOf(updated) + startIndex + 1 }
+          : s;
+      });
+
+      onUpdate(updatedSpeakers);
+    } catch (error) {
+      console.error("Reorder error:", error);
+      alert("Failed to update order");
+    }
+  };
 
   const deleteSpeaker = async (id: string) => {
     if (confirm("Are you sure you want to delete this speaker?")) {
@@ -170,6 +221,9 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
                 />
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                SortOrder
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Photo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -186,60 +240,28 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {displayedSpeakers.map((speaker) => (
-              <tr key={speaker.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(speaker.id)}
-                    onChange={() => toggleSelect(speaker.id)}
-                    className="rounded"
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={displayedSpeakers.map((s) => s.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <tbody className="bg-white divide-y divide-gray-200">
+                {displayedSpeakers.map((speaker) => (
+                  <SortableRow
+                    key={speaker.id}
+                    speaker={speaker}
+                    isSelected={selectedIds.includes(speaker.id)}
+                    onToggleSelect={toggleSelect}
+                    onEdit={setEditingSpeaker}
+                    onDelete={deleteSpeaker}
                   />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {speaker.photo_url ? (
-                    <img
-                      src={speaker.photo_url}
-                      alt={speaker.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500 text-sm font-medium">
-                        {speaker.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {speaker.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {speaker.organization}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {speaker.talk_title}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setEditingSpeaker(speaker)}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => deleteSpeaker(speaker.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+                ))}
+              </tbody>
+            </SortableContext>
+          </DndContext>
         </table>
 
         {/* Pagination */}
@@ -292,6 +314,97 @@ export function SpeakersManager({ speakers, onUpdate }: SpeakersManagerProps) {
         />
       )}
     </div>
+  );
+}
+
+function SortableRow({
+  speaker,
+  isSelected,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}: {
+  speaker: Speaker;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
+  onEdit: (speaker: Speaker) => void;
+  onDelete: (id: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: speaker.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr ref={setNodeRef} style={style} className="hover:bg-gray-50">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => onToggleSelect(speaker.id)}
+          className="rounded"
+        />
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing bg-grey-100 text-orange-700 hover:bg-orange-200 font-bold text-sm w-8 h-8 flex items-center justify-center rounded border-2 border-orange-300 hover:border-orange-400 shadow-sm"
+        >
+          {speaker.sort_order || "-"}
+        </button>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        {speaker.photo_url ? (
+          <img
+            src={speaker.photo_url}
+            alt={speaker.name}
+            className="w-10 h-10 rounded-full"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500 text-sm font-medium">
+              {speaker.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        {speaker.name}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        {speaker.organization}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        {speaker.talk_title}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => onEdit(speaker)}
+            className="text-indigo-600 hover:text-indigo-900"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(speaker.id)}
+            className="text-red-600 hover:text-red-900"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 }
 

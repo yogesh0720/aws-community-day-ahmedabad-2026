@@ -1,7 +1,22 @@
 import { useState } from "react";
-import { Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+} from "lucide-react";
 import { Volunteer } from "../../lib/supabase";
 import { volunteersApi } from "../../lib/api";
+import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface VolunteersManagerProps {
   volunteers: Volunteer[];
@@ -22,7 +37,11 @@ export function VolunteersManager({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredVolunteers = volunteers.filter(
+  const sortedVolunteers = [...volunteers].sort(
+    (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
+  );
+
+  const filteredVolunteers = sortedVolunteers.filter(
     (v) =>
       v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -35,6 +54,38 @@ export function VolunteersManager({
     startIndex,
     startIndex + PAGE_SIZE
   );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = displayedVolunteers.findIndex((v) => v.id === active.id);
+    const newIndex = displayedVolunteers.findIndex((v) => v.id === over.id);
+
+    const reordered = arrayMove(displayedVolunteers, oldIndex, newIndex);
+
+    try {
+      await Promise.all(
+        reordered.map((volunteer, index) =>
+          volunteersApi.update(volunteer.id, {
+            sort_order: startIndex + index + 1,
+          })
+        )
+      );
+
+      const updatedVolunteers = volunteers.map((v) => {
+        const updated = reordered.find((r) => r.id === v.id);
+        return updated
+          ? { ...v, sort_order: reordered.indexOf(updated) + startIndex + 1 }
+          : v;
+      });
+
+      onUpdate(updatedVolunteers);
+    } catch (error) {
+      console.error("Reorder error:", error);
+      alert("Failed to update order");
+    }
+  };
 
   const deleteVolunteer = async (id: string) => {
     if (confirm("Are you sure you want to delete this volunteer?")) {
@@ -179,10 +230,16 @@ export function VolunteersManager({
                 />
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                SortOrder
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Photo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                LinkedIn
               </th>
               {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Email
@@ -195,60 +252,28 @@ export function VolunteersManager({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {displayedVolunteers.map((volunteer) => (
-              <tr key={volunteer.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(volunteer.id)}
-                    onChange={() => toggleSelect(volunteer.id)}
-                    className="rounded"
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={displayedVolunteers.map((v) => v.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <tbody className="bg-white divide-y divide-gray-200">
+                {displayedVolunteers.map((volunteer) => (
+                  <SortableRow
+                    key={volunteer.id}
+                    volunteer={volunteer}
+                    isSelected={selectedIds.includes(volunteer.id)}
+                    onToggleSelect={toggleSelect}
+                    onEdit={setEditingVolunteer}
+                    onDelete={deleteVolunteer}
                   />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {volunteer.photo_url ? (
-                    <img
-                      src={volunteer.photo_url}
-                      alt={volunteer.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500 text-sm font-medium">
-                        {volunteer.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {volunteer.name}
-                </td>
-                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {volunteer.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {volunteer.role}
-                </td> */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setEditingVolunteer(volunteer)}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => deleteVolunteer(volunteer.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+                ))}
+              </tbody>
+            </SortableContext>
+          </DndContext>
         </table>
 
         {/* Pagination */}
@@ -301,6 +326,94 @@ export function VolunteersManager({
         />
       )}
     </div>
+  );
+}
+
+function SortableRow({
+  volunteer,
+  isSelected,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}: {
+  volunteer: Volunteer;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
+  onEdit: (volunteer: Volunteer) => void;
+  onDelete: (id: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: volunteer.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr ref={setNodeRef} style={style} className="hover:bg-gray-50">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => onToggleSelect(volunteer.id)}
+          className="rounded"
+        />
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing bg-grey-100 text-orange-700 hover:bg-orange-200 font-bold text-sm w-8 h-8 flex items-center justify-center rounded border-2 border-orange-300 hover:border-orange-400 shadow-sm"
+        >
+          {volunteer.sort_order || "-"}
+        </button>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        {volunteer.photo_url ? (
+          <img
+            src={volunteer.photo_url}
+            alt={volunteer.name}
+            className="w-10 h-10 rounded-full"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500 text-sm font-medium">
+              {volunteer.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        {volunteer.name}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        {volunteer.linkedin_url}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => onEdit(volunteer)}
+            className="text-indigo-600 hover:text-indigo-900"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(volunteer.id)}
+            className="text-red-600 hover:text-red-900"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 }
 
